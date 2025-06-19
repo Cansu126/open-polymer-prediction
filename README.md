@@ -1,100 +1,127 @@
-# NeurIPS - Open Polymer Prediction 2025
+# Open Polymer Prediction Challenge
 
-Predicting polymer properties from SMILES using machine learning.
+This project provides a complete framework for tackling the NeurIPS 2025 Open Polymer Prediction competition. The primary goal is to predict five key polymer properties—Glass Transition Temperature (Tg), Fractional Free Volume (FFV), Thermal Conductivity (Tc), Density, and Radius of Gyration (Rg)—directly from their SMILES representations using advanced machine learning models.
+
+## Table of Contents
+- [Overview](#overview)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#usage)
+  - [Training Models](#training-models)
+  - [Making Submissions](#making-submissions)
+- [Models](#models)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Overview
-This project is for the NeurIPS 2025 Open Polymer Prediction competition. The goal is to predict five key polymer properties (Tg, FFV, Tc, Density, Rg) from SMILES strings using ML models.
+
+Polymers are fundamental materials in modern science and industry, yet predicting their properties remains a complex challenge. This project leverages graph-based neural networks and ensemble methods to learn the intricate relationship between a polymer's molecular structure (represented as a SMILES string) and its macroscopic properties. Our solution is designed to be modular, extensible, and easy to use, providing a strong baseline for the competition.
 
 ## Project Structure
-- `notebooks/` - Jupyter notebooks for exploration and modeling
-- `src/` - Utility scripts (feature engineering, metrics, etc.)
-- `data/` - Place train/test CSVs here
 
-## Setup
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. Download the competition data and place it in the `data/` folder.
+The repository is organized as follows:
 
-## Workflow
-- Data loading and EDA
-- Feature engineering (SMILES to descriptors)
-- Model training and evaluation
-- Submission file creation
-
-## Submission
-- Output a `submission.csv` in the required format for the competition. 
-
-## Submission File Creation
-
-The submission file is created by running the final cell in the notebook. The code block to apply changes from is:
-
-```python
-property_cols = ['Tg', 'FFV', 'Tc', 'Density', 'Rg']
-submission = test[['id']].copy()
-for i, col in enumerate(property_cols):
-    submission[col] = stacked_preds[:, i]  # or your final predictions array
-submission = submission[['id'] + property_cols]
-submission.to_csv('submission.csv', index=False)
-print('Submission file saved as submission.csv')
-display(submission.head())
+```
+.
+├── config/
+│   └── training_config.json    # Configuration for training parameters
+├── data/
+│   ├── processed/              # Processed data for modeling
+│   └── raw/                    # Raw competition data
+├── models/                     # Saved model checkpoints
+├── notebooks/
+│   └── 01_starter.ipynb        # Exploratory data analysis and baseline models
+├── src/
+│   ├── ensemble.py             # Code for ensembling models
+│   ├── gnn_model.py            # Graph Neural Network model definition
+│   ├── polymer_features.py     # Feature engineering from SMILES
+│   ├── train_orchestrator.py   # Main training script
+│   └── utils.py                # Utility functions
+├── .gitignore                  # Files to be ignored by Git
+├── LICENSE                     # Project license
+├── make_submission.py          # Script to generate the final submission file
+├── README.md                   # This readme file
+└── requirements.txt            # Python dependencies
 ```
 
-This code block creates a submission file by copying the test dataset, adding the predicted values, and saving it as `submission.csv`.
+## Getting Started
 
-## Troubleshooting
+Follow these instructions to set up the project environment and start running experiments.
 
-If `submission.csv` was not created, it means the final prediction/saving cell in your notebook did not run successfully, or there was an error earlier in the pipeline.
+### Prerequisites
 
-Here's how to troubleshoot and fix this:
+- Python 3.8 or higher
+- Conda or venv for environment management (recommended)
 
-1. **Check the Final Cell**:
-   - Make sure you have a cell like this at the end of your notebook:
-     ```python
-     property_cols = ['Tg', 'FFV', 'Tc', 'Density', 'Rg']
-     submission = test[['id']].copy()
-     for i, col in enumerate(property_cols):
-         submission[col] = stacked_preds[:, i]  # or your final predictions array
-     submission = submission[['id'] + property_cols]
-     submission.to_csv('submission.csv', index=False)
-     print('Submission file saved as submission.csv')
-     display(submission.head())
-     ```
-   - If you are using a different variable for predictions (e.g., `test_preds`, `ensemble_preds`), make sure to use that variable in place of `stacked_preds`.
+### Installation
 
-2. **Check for Errors**:
-   - Did any cell throw an error before the submission cell?
-   - Did the notebook finish running all cells, or did it stop partway?
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/Cansu126/open-polymer-prediction.git
+    cd open-polymer-prediction
+    ```
 
-3. **Check the Working Directory**:
-   - The file will be saved in the current working directory of the notebook.
-   - In Jupyter, you can check your working directory with:
-     ```python
-     import os
-     print(os.getcwd())
-     ```
-   - The file should appear in that directory.
+2.  **Create and activate a virtual environment:**
+    - Using `conda`:
+      ```bash
+      conda create -n polymer-env python=3.8
+      conda activate polymer-env
+      ```
+    - Using `venv`:
+      ```bash
+      python -m venv venv
+      source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+      ```
 
-4. **Re-run the Final Cell**:
-   - If you made changes or fixed errors, re-run the final cell to generate `submission.csv`.
+3.  **Install the required dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-5. **If You Still Don't See the File**:
-   - Let me know if you see any error messages, or copy the output of the final cell here.
-   - If you want, I can generate a standalone script (e.g., `make_submission.py`) that you can run to create the file.
+4.  **Download the data:**
+    Download the official competition data and place the `train.csv` and `test.csv` files into the `data/raw/` directory.
 
-**Let me know what you see, or if you want a ready-to-run script for generating `submission.csv`!** 
+## Usage
 
-## Running the Script
+This project is designed to be run from the command line for both training and submission generation.
 
-To run the script, you can use the following command:
+### Training Models
+
+To train the models, run the main training orchestrator script:
+
+```bash
+python src/train_orchestrator.py
+```
+
+This script will handle feature engineering, model training, and saving the best model checkpoints to the `models/` directory. You can customize the training process by modifying `config/training_config.json`.
+
+### Making Submissions
+
+Once you have a trained model, you can generate a `submission.csv` file for the competition leaderboard.
+
+Run the submission script:
 
 ```bash
 python make_submission.py
 ```
 
-This script will generate the submission file based on the predictions from your model.
+This will load the test data, apply the trained model to generate predictions, and format the output into the required `submission.csv` file in the root directory.
 
-**If you want, you can also upload a screenshot of your folder structure or the error message.**
+## Models
 
-I'm here to help you until it works—just let me know what you see after running `dir data`! 
+This project explores several models, including:
+- **Graph Neural Networks (GNNs)**: To capture the graph structure of molecules.
+- **Transformers**: To learn from the sequential nature of SMILES strings.
+- **Ensemble Methods**: To combine the strengths of different models for robust predictions.
+
+The best-performing models are saved and used for the final submission.
+
+## Contributing
+
+Contributions are welcome! If you have ideas for improvements, please open an issue to discuss your suggestions. Pull requests are also appreciated.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details. 

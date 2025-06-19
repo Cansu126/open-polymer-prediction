@@ -1,8 +1,12 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+# C extensions
 *.so
+
+# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -16,39 +20,116 @@ parts/
 sdist/
 var/
 wheels/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
-# Virtual Environment
-venv/
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Virtualenv
+.env
+.venv
 env/
+venv/
 ENV/
+env.bak/
+venv.bak/
 
-# IDE
+# Spyder project settings
+.spyderproject
+.spyderworkspace
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# IDE settings
 .idea/
 .vscode/
 *.swp
 *.swo
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# OS-specific files
+.DS_Store
+Thumbs.db
 
-# Project specific
-models/
-logs/
-wandb/
+# Project-specific ignores
+# Keep models and logs directories, but ignore their contents.
+# Add a .gitkeep file in these directories if you want to keep them empty.
+models/*
+!models/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# Ignore processed data, but not raw data structure.
+# This assumes you might want to keep the raw data directory structure.
+data/processed/*
+!data/processed/.gitkeep
+
+# Ignoring large data files, credentials, and specific model checkpoints
+*.pkl
+*.h5
 *.pt
 *.pth
 *.ckpt
-*.log
+wandb/
 
-# Data
-data/*.csv
-data/*.json
-*.pkl
-*.h5
-
-# OS specific
-.DS_Store
-Thumbs.db 
+# Competition specific files - assuming you generate these and don't need to track them
+submission.csv 
