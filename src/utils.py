@@ -39,25 +39,24 @@ def get_3d_descriptors(mol, conf) -> List[float]:
     try:
         # Basic 3D descriptors with proper error handling
         descriptor_functions = [
-            (Descriptors.PMI1, "PMI1"),
-            (Descriptors.PMI2, "PMI2"),
-            (Descriptors.PMI3, "PMI3"),
-            (Descriptors.NPR1, "NPR1"),
-            (Descriptors.NPR2, "NPR2"),
-            (Descriptors.RadiusOfGyration, "RadiusOfGyration"),
-            (Descriptors.Asphericity, "Asphericity"),
-            (Descriptors.Eccentricity, "Eccentricity"),
-            (Descriptors.InertialShapeFactor, "InertialShapeFactor"),
-            (Descriptors.SpherocityIndex, "SpherocityIndex")
+            (rdMolDescriptors.CalcPMI1, "PMI1"),
+            (rdMolDescriptors.CalcPMI2, "PMI2"),
+            (rdMolDescriptors.CalcPMI3, "PMI3"),
+            (rdMolDescriptors.CalcNPR1, "NPR1"),
+            (rdMolDescriptors.CalcNPR2, "NPR2"),
+            (rdMolDescriptors.CalcRadiusOfGyration, "RadiusOfGyration"),
+            (rdMolDescriptors.CalcAsphericity, "Asphericity"),
+            (rdMolDescriptors.CalcEccentricity, "Eccentricity"),
+            (rdMolDescriptors.CalcInertialShapeFactor, "InertialShapeFactor"),
+            (rdMolDescriptors.CalcSpherocityIndex, "SpherocityIndex")
         ]
 
         for desc_func, desc_name in descriptor_functions:
             try:
-                value = desc_func(mol, conf) if desc_name in ["PMI1", "PMI2", "PMI3"] else desc_func(mol)
+                value = desc_func(mol)
                 descriptors.append(value)
             except Exception as e:
                 print(f"Warning: Failed to calculate {desc_name}: {str(e)}")
-                descriptors.append(0.0)
         
         # Enhanced 3D shape descriptors
         try:
