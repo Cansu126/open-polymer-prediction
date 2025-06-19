@@ -1,0 +1,16 @@
+rdkit
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+jupyter
+xgboost
+lightgbm
+catboost
+dgl
+torch
+torch-geometric
+transformers
+optuna
+scikit-optimize 
