@@ -2,11 +2,55 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv, global_mean_pool, global_add_pool
-from torch_geometric.data import Data
+from torch_geometric.data import Data, DataLoader
 from rdkit import Chem
 import numpy as np
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.pool import scatter_mean, scatter_softmax, scatter_sum
+
+def scatter_mean(src, index, dim=-1, out=None, dim_size=None):
+    if out is None:
+        size = list(src.size())
+        if dim_size is not None:
+            size[dim] = dim_size
+        elif index.numel() == 0:
+            size[dim] = 0
+        else:
+            size[dim] = int(index.max()) + 1
+        out = src.new_zeros(size)
+
+    out.scatter_add_(dim, index, src)
+    count = torch.zeros_like(out)
+    count.scatter_add_(dim, index, torch.ones_like(src))
+    count[count == 0] = 1
+    return out / count
+
+def scatter_sum(src, index, dim=-1, out=None, dim_size=None):
+    if out is None:
+        size = list(src.size())
+        if dim_size is not None:
+            size[dim] = dim_size
+        elif index.numel() == 0:
+            size[dim] = 0
+        else:
+            size[dim] = int(index.max()) + 1
+        out = src.new_zeros(size)
+
+    return out.scatter_add_(dim, index, src)
+
+def scatter_softmax(src, index, dim=-1):
+    if index.numel() == 0:
+        return src
+
+    max_value_per_index = torch.zeros_like(src)
+    max_value_per_index.scatter_reduce_(dim, index, src, reduce='amax')
+    max_value_per_index = max_value_per_index.index_select(dim, index)
+
+    recentered_scores = src - max_value_per_index
+    exp_scores = torch.exp(recentered_scores)
+
+    sum_per_index = torch.zeros_like(src)
+    sum_per_index.scatter_add_(dim, index, exp_scores)
+    sum_per_index = sum_per_index.index_select(dim, index)
 
 class EnhancedMPNNConv(MessagePassing):
     def __init__(self, node_dim: int, edge_dim: int, hidden_dim: int, num_heads: int = 4, dropout: float = 0.1):
