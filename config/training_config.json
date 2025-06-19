@@ -1,0 +1,109 @@
+{
+    "project_name": "polymer_prediction",
+    "property_names": ["Density", "FFV", "Rg", "Tc", "Tg"],
+    "use_wandb": true,
+    "cv_folds": 5,
+    "batch_size": 32,
+    "save_dir": "models",
+    
+    "gnn": {
+        "node_dim": 89,
+        "edge_dim": 10,
+        "hidden_dim": 256,
+        "num_layers": 6,
+        "dropout_rate": 0.1,
+        "learning_rate": 0.001,
+        "weight_decay": 0.01,
+        "epochs": 200,
+        "patience": 20,
+        "t0": 10,
+        "num_heads": 8
+    },
+    
+    "transformer": {
+        "hidden_dim": 768,
+        "num_layers": 12,
+        "num_heads": 12,
+        "dropout_rate": 0.1,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "epochs": 100,
+        "patience": 10,
+        "max_lr": 0.001,
+        "warmup_steps": 1000
+    },
+    
+    "feature_extraction": {
+        "use_3d": true,
+        "optimize_conformers": true,
+        "num_conformers": 10,
+        "force_field": "MMFF94",
+        "feature_types": [
+            "basic",
+            "topological",
+            "electronic",
+            "structural",
+            "mordred",
+            "deepchem",
+            "patterns"
+        ]
+    },
+    
+    "ensemble": {
+        "optimization_trials": 100,
+        "temperature_range": [0.1, 5.0],
+        "calibration_scale_range": [0.1, 10.0],
+        "calibration_shift_range": [-2.0, 2.0]
+    },
+    
+    "augmentation": {
+        "enabled": true,
+        "rotation_angle": 30,
+        "translation_factor": 0.1,
+        "jitter_sigma": 0.01,
+        "dropout_prob": 0.1
+    },
+    
+    "regularization": {
+        "label_smoothing": 0.1,
+        "gradient_clip_norm": 1.0,
+        "weight_decay": 0.01,
+        "feature_dropout": 0.1,
+        "attention_dropout": 0.1
+    },
+    
+    "optimization": {
+        "use_amp": true,
+        "gradient_accumulation_steps": 4,
+        "warmup_ratio": 0.1,
+        "scheduler": "cosine_with_restarts",
+        "num_cycles": 3
+    },
+    
+    "evaluation": {
+        "metrics": [
+            "rmse",
+            "mae",
+            "r2",
+            "nll",
+            "calibration_error"
+        ],
+        "uncertainty_metrics": [
+            "mean_uncertainty",
+            "uncertainty_correlation",
+            "coverage_68",
+            "coverage_95",
+            "coverage_99"
+        ]
+    },
+    
+    "logging": {
+        "log_interval": 100,
+        "eval_interval": 1000,
+        "save_interval": 5000,
+        "num_samples_to_log": 10,
+        "log_gradients": true,
+        "log_weights": true,
+        "log_predictions": true
+    }
+} 
